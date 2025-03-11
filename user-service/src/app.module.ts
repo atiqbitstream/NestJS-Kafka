@@ -12,7 +12,7 @@ import { UserController } from './user.controller';
         transport: Transport.KAFKA,
         options:{
           client:{
-            brokers: ['localhost: 9092'],
+            brokers: [process.env.EVENT_STREAMS_BROKERS],
           },
           consumer:{
             groupId: 'user-consumer'
