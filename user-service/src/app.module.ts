@@ -13,6 +13,12 @@ import { UserController } from './user.controller';
         options:{
           client:{
             brokers: [process.env.EVENT_STREAMS_BROKERS],
+            ssl:true,
+            sasl:{
+              mechanism:'plain',
+              username: process.env.KAFKA_USERNAME,
+              password: process.env.KAFKA_PASSWORD,
+            }
           },
           consumer:{
             groupId: 'user-consumer'
