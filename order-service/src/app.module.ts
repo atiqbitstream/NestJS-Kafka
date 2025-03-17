@@ -13,7 +13,7 @@ import { OrderController } from './order.controller';
         transport: Transport.KAFKA,
         options:{
           client:{
-            brokers: [process.env.EVENT_STREAMS_BROKERS],
+            brokers: JSON.parse(process.env.EVENT_STREAMS_KAFKA_BROKERS_SASL),
           },
           consumer: {
             groupId: 'order-consumer',

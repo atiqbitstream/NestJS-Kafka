@@ -12,12 +12,12 @@ import { UserController } from './user.controller';
         transport: Transport.KAFKA,
         options:{
           client:{
-            brokers: [process.env.EVENT_STREAMS_BROKERS],
+            brokers: JSON.parse(process.env.EVENT_STREAMS_KAFKA_BROKERS_SASL),
             ssl:true,
             sasl:{
               mechanism:'plain',
-              username: process.env.KAFKA_USERNAME,
-              password: process.env.KAFKA_PASSWORD,
+              username: process.env.EVENT_STREAMS_USER,
+              password: process.env.EVENT_STREAMS_PASSWORD,
             }
           },
           consumer:{

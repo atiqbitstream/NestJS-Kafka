@@ -8,9 +8,10 @@ export class UserController
     {}
 
     @Post('create')
-    async createUser(@Body() data: {id:string; name:string})
-    {
-        this.kafkaclient.emit('user.created',data);
-        return {message: 'user created',data};
-    }
+    async createUser(@Body() data: { id: string; name: string }) {
+        this.kafkaclient.emit('user.created', {
+          value: JSON.stringify(data)  // Send data as the message value
+        });
+        return { message: 'user created', data };
+      }
 }
