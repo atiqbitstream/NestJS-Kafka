@@ -44,11 +44,7 @@ async function bootstrap() {
           return Buffer.from(JSON.stringify(value));
         },
       },
-      deserializer: {
-        deserialize(value) {
-          return JSON.parse(value.toString());
-        },
-      },
+     
     }
   });
     
