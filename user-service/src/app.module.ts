@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UserController } from './user.controller';
+import { Partitioners } from '@nestjs/microservices/external/kafka.interface';
 
 @Module({
   imports: [
@@ -10,19 +11,29 @@ import { UserController } from './user.controller';
       {
         name: 'KAFKA_SERVICE',
         transport: Transport.KAFKA,
-        options:{
-          client:{
+        options: {
+          client: {
+            clientId: 'user-service-client',
             brokers: JSON.parse(process.env.EVENT_STREAMS_KAFKA_BROKERS_SASL),
-            ssl:true,
-            sasl:{
-              mechanism:'plain',
+            ssl: true,
+            sasl: {
+              mechanism: 'plain',
               username: process.env.EVENT_STREAMS_USER,
               password: process.env.EVENT_STREAMS_PASSWORD,
             }
           },
-          consumer:{
+          consumer: {
             groupId: 'user-consumer'
-          }
+          },
+          producer: {
+            // Use the legacy partitioner for compatibility
+            createPartitioner: Partitioners.LegacyPartitioner,
+          },
+          serializer: {
+            serialize(value) {
+              return Buffer.from(JSON.stringify(value));
+            },
+          },
         }
       }
     ])

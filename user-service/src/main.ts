@@ -1,30 +1,30 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { Partitioners } from '@nestjs/microservices/external/kafka.interface';
 
 async function bootstrap() {
   // Create a hybrid application
   const app = await NestFactory.create(AppModule);
-  
-  // Parse brokers correctly - the environment variable contains a JSON array
+
+  // Parse brokers correctly
   let brokers = [];
   try {
-    // If it's a JSON string, parse it
     if (process.env.EVENT_STREAMS_KAFKA_BROKERS_SASL) {
       brokers = JSON.parse(process.env.EVENT_STREAMS_KAFKA_BROKERS_SASL);
     }
     console.log('Kafka brokers:', brokers);
   } catch (error) {
     console.error('Error parsing Kafka brokers:', error);
-    // Fallback: If it's not valid JSON, try comma-separated format
     brokers = process.env.EVENT_STREAMS_KAFKA_BROKERS_SASL?.split(',') || [];
   }
-  
+
   // Connect the Kafka microservice
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
       client: {
+        clientId: 'user-service',
         brokers: brokers,
         ssl: true,
         sasl: {
@@ -35,26 +35,25 @@ async function bootstrap() {
       },
       consumer: {
         groupId: 'user-consumer',
-        sessionTimeout: 30000,     // Increase session timeout
-        heartbeatInterval: 10000,  // Adjust heartbeat frequency
-        allowAutoTopicCreation: true // Auto-create topics if missing
+        sessionTimeout: 30000,
+        heartbeatInterval: 10000,
+        allowAutoTopicCreation: true
       },
+      producer: {
+        // Use the legacy partitioner for compatibility
+        createPartitioner: Partitioners.LegacyPartitioner,
+      },
+      // Updated serializer
       serializer: {
         serialize(value) {
-          // Make sure value is always serialized as JSON string
-          if (typeof value !== 'string') {
-            return Buffer.from(JSON.stringify(value));
-          }
-          return Buffer.from(value);
+          return Buffer.from(JSON.stringify(value));
         },
       },
-     
     }
   });
-    
+
   // Start both the HTTP server and microservices
   await app.startAllMicroservices();
   await app.listen(3000, '0.0.0.0');
-  
 }
 bootstrap();

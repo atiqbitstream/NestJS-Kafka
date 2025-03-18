@@ -1,30 +1,30 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { Partitioners } from '@nestjs/microservices/external/kafka.interface';
 
 async function bootstrap() {
-  /// Create a hybrid application
+  // Create a hybrid application
   const app = await NestFactory.create(AppModule);
-  
-  // Parse brokers correctly - the environment variable contains a JSON array
+
+  // Parse brokers correctly
   let brokers = [];
   try {
-    // If it's a JSON string, parse it
     if (process.env.EVENT_STREAMS_KAFKA_BROKERS_SASL) {
       brokers = JSON.parse(process.env.EVENT_STREAMS_KAFKA_BROKERS_SASL);
     }
     console.log('Kafka brokers:', brokers);
   } catch (error) {
     console.error('Error parsing Kafka brokers:', error);
-    // Fallback: If it's not valid JSON, try comma-separated format
     brokers = process.env.EVENT_STREAMS_KAFKA_BROKERS_SASL?.split(',') || [];
   }
-  
+
   // Connect the Kafka microservice
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
       client: {
+        clientId: 'order-service',
         brokers: brokers,
         ssl: true,
         sasl: {
@@ -35,35 +35,31 @@ async function bootstrap() {
       },
       consumer: {
         groupId: 'order-consumer',
-        sessionTimeout: 30000,     // Increase session timeout
-        heartbeatInterval: 10000,  // Adjust heartbeat frequency
-        allowAutoTopicCreation: true // Auto-create topics if missing
+        sessionTimeout: 30000,
+        heartbeatInterval: 10000,
+        allowAutoTopicCreation: true
       },
-        // Modified deserializer to handle potential different message formats
-    deserializer: {
-      deserialize(value) {
-        try {
-          // First try to parse as JSON string
-          return JSON.parse(value.toString());
-        } catch (e) {
+      producer: {
+        // Use the legacy partitioner for compatibility
+        createPartitioner: Partitioners.LegacyPartitioner,
+      },
+      // Properly handle buffer to string conversion
+      deserializer: {
+        deserialize(value) {
+          if (value === null) return null;
+          
           try {
-            // If direct parsing fails, check if it's already an object wrapped in Buffer
-            const content = value.toString();
-            if (typeof content === 'string' && content.startsWith('{') && content.endsWith('}')) {
-              return JSON.parse(content);
-            }
-            // If all else fails, return the value as is
-            return content;
-          } catch (innerErr) {
-            console.error('Deserializer error:', innerErr);
+            const message = value.toString();
+            return JSON.parse(message);
+          } catch (e) {
+            console.error('Deserialization error:', e);
             return value;
           }
         }
-      }
-    },
-  }
+      },
+    }
   });
-    
+
   // Start both the HTTP server and microservices
   await app.startAllMicroservices();
   await app.listen(3000, '0.0.0.0');
