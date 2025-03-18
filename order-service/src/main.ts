@@ -39,7 +39,17 @@ async function bootstrap() {
         heartbeatInterval: 10000,  // Adjust heartbeat frequency
         allowAutoTopicCreation: true // Auto-create topics if missing
       },
-    }
+      serializer: {
+        serialize(value) {
+          return Buffer.from(JSON.stringify(value));
+        },
+      },
+      deserializer: {
+        deserialize(value) {
+          return JSON.parse(value.toString());
+        }
+    },
+  }
   });
     
   // Start both the HTTP server and microservices
