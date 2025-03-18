@@ -27,19 +27,19 @@ jobs:
           ibmcloud es init  # Initialize the Event Streams plugin and select your instance
 
       # Create Applications with Dummy Images (Temporary)
-      - name: Create Applications with Dummy Images (Temporary)
-        run: |
-          # Create User Service with a dummy image
-          ibmcloud ce application create --name user-service \
-            --image nginx:alpine \
-            --port 80 \
-            --registry-secret icr-secret
+      # - name: Create Applications with Dummy Images (Temporary)
+      #   run: |
+      #     # Create User Service with a dummy image
+      #     ibmcloud ce application create --name user-service \
+      #       --image nginx:alpine \
+      #       --port 80 \
+      #       --registry-secret icr-secret
 
-          # Create Order Service with a dummy image
-          ibmcloud ce application create --name order-service \
-            --image nginx:alpine \
-            --port 80 \
-            --registry-secret icr-secret
+      #     # Create Order Service with a dummy image
+      #     ibmcloud ce application create --name order-service \
+      #       --image nginx:alpine \
+      #       --port 80 \
+      #       --registry-secret icr-secret
 
       # Bind Event Streams Service
       - name: Bind Event Streams Service
