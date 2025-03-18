@@ -18,6 +18,9 @@ jobs:
           ibmcloud plugin install code-engine
           ibmcloud plugin install event-streams  # Install Event Streams plugin
           ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r au-syd
+          docker login -u iamapikey -p ${{ secrets.IBM_CLOUD_API_KEY }} au.icr.io
+          ibmcloud target -g Default
+          ibmcloud ce project select -n my-kafka-project
           
       - name: Initialize Event Streams plugin
         run: |
@@ -54,9 +57,6 @@ jobs:
       - name: Build & Push Docker Image (User Service)
         run: |
           docker build -t au.icr.io/mycodeengine/user-service:latest ./user-service
-          docker login -u iamapikey -p ${{ secrets.IBM_CLOUD_API_KEY }} au.icr.io
-          ibmcloud target -g Default
-          ibmcloud ce project select -n my-kafka-project
           docker push au.icr.io/mycodeengine/user-service:latest
 
       - name: Deploy User Service to Code Engine
