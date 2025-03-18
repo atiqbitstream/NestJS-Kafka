@@ -43,3 +43,5 @@ jobs:
       - name: Deploy Order Service to Code Engine
         run: |
           ibmcloud ce application update --name order-service --image au.icr.io/mycodeengine/order-service:latest
+
+          
