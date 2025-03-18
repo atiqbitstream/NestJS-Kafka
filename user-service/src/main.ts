@@ -41,7 +41,7 @@ async function bootstrap() {
       },
       producer: {
         // Use the legacy partitioner for compatibility
-        createPartitioner: Partitioners.LegacyPartitioner,
+        createPartitioner: Partitioners.DefaultPartitioner,
       },
       // Updated serializer
       serializer: {

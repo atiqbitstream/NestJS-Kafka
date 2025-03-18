@@ -21,7 +21,7 @@ import { Partitioners } from '@nestjs/microservices/external/kafka.interface';
           },
           producer: {
             // Use the legacy partitioner for compatibility
-            createPartitioner: Partitioners.LegacyPartitioner,
+            createPartitioner: Partitioners.DefaultPartitioner,
           },
           deserializer: {
             deserialize(value) {
