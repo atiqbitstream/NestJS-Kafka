@@ -41,7 +41,11 @@ async function bootstrap() {
       },
       serializer: {
         serialize(value) {
-          return Buffer.from(JSON.stringify(value));
+          // Make sure value is always serialized as JSON string
+          if (typeof value !== 'string') {
+            return Buffer.from(JSON.stringify(value));
+          }
+          return Buffer.from(value);
         },
       },
      

@@ -39,10 +39,27 @@ async function bootstrap() {
         heartbeatInterval: 10000,  // Adjust heartbeat frequency
         allowAutoTopicCreation: true // Auto-create topics if missing
       },
-      deserializer: {
-        deserialize(value) {
+        // Modified deserializer to handle potential different message formats
+    deserializer: {
+      deserialize(value) {
+        try {
+          // First try to parse as JSON string
           return JSON.parse(value.toString());
+        } catch (e) {
+          try {
+            // If direct parsing fails, check if it's already an object wrapped in Buffer
+            const content = value.toString();
+            if (typeof content === 'string' && content.startsWith('{') && content.endsWith('}')) {
+              return JSON.parse(content);
+            }
+            // If all else fails, return the value as is
+            return content;
+          } catch (innerErr) {
+            console.error('Deserializer error:', innerErr);
+            return value;
+          }
         }
+      }
     },
   }
   });
