@@ -42,17 +42,17 @@ jobs:
       #       --registry-secret icr-secret
 
       # Bind Event Streams Service
-      - name: Bind Event Streams Service
-        run: |
-          # For User Service
-          ibmcloud ce application bind --name user-service \
-            --service-instance my-event-streams \
-            --prefix EVENT_STREAMS
+      # - name: Bind Event Streams Service
+      #   run: |
+      #     # For User Service
+      #     ibmcloud ce application bind --name user-service \
+      #       --service-instance my-event-streams \
+      #       --prefix EVENT_STREAMS
 
-          # For Order Service
-          ibmcloud ce application bind --name order-service \
-            --service-instance my-event-streams \
-            --prefix EVENT_STREAMS
+      #     # For Order Service
+      #     ibmcloud ce application bind --name order-service \
+      #       --service-instance my-event-streams \
+      #       --prefix EVENT_STREAMS
 
       - name: Build & Push Docker Image (User Service)
         run: |
