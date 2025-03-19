@@ -39,24 +39,24 @@ async function bootstrap() {
         heartbeatInterval: 10000,
         allowAutoTopicCreation: true
       },
-      producer: {
-        // Use the legacy partitioner for compatibility
-        createPartitioner: Partitioners.DefaultPartitioner,
-      },
-      // Properly handle buffer to string conversion
-      deserializer: {
-        deserialize(value) {
-          if (value === null) return null;
+      // producer: {
+      //   // Use the legacy partitioner for compatibility
+      //   createPartitioner: Partitioners.DefaultPartitioner,
+      // },
+      // // Properly handle buffer to string conversion
+      // deserializer: {
+      //   deserialize(value) {
+      //     if (value === null) return null;
           
-          try {
-            const message = value.toString();
-            return JSON.parse(message);
-          } catch (e) {
-            console.error('Deserialization error:', e);
-            return value;
-          }
-        }
-      },
+      //     try {
+      //       const message = value.toString();
+      //       return JSON.parse(message);
+      //     } catch (e) {
+      //       console.error('Deserialization error:', e);
+      //       return value;
+      //     }
+      //   }
+      // },
     }
   });
 
