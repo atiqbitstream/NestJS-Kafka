@@ -25,14 +25,6 @@ import { Partitioners } from '@nestjs/microservices/external/kafka.interface';
           consumer: {
             groupId: 'user-consumer'
           },
-        //   producer: {
-        //     // Use the legacy partitioner for compatibility
-        //     createPartitioner: Partitioners.DefaultPartitioner,
-        //   },
-        //   serializer: {
-        //     serialize(value) {
-        //       return Buffer.from(JSON.stringify(value));
-        //     },
           },
         }
       

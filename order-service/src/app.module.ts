@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { OrderController } from './order.controller';
-import { Partitioners } from '@nestjs/microservices/external/kafka.interface';
+
 
 @Module({
   imports: [
@@ -19,23 +19,6 @@ import { Partitioners } from '@nestjs/microservices/external/kafka.interface';
           consumer: {
             groupId: 'order-consumer',
           },
-          // producer: {
-          //   // Use the legacy partitioner for compatibility
-          //   createPartitioner: Partitioners.DefaultPartitioner,
-          // },
-          // deserializer: {
-          //   deserialize(value) {
-          //     if (value === null) return null;
-              
-          //     try {
-          //       const message = value.toString();
-          //       return JSON.parse(message);
-          //     } catch (e) {
-          //       console.error('Deserialization error:', e);
-          //       return value;
-          //     }
-          //   }
-          // },
         }
       }
     ])

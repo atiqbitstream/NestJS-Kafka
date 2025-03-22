@@ -39,16 +39,6 @@ async function bootstrap() {
         heartbeatInterval: 10000,
         allowAutoTopicCreation: true
       },
-      // producer: {
-      //   // Use the legacy partitioner for compatibility
-      //   createPartitioner: Partitioners.DefaultPartitioner,
-      // },
-      // // Updated serializer
-      // serializer: {
-      //   serialize(value) {
-      //     return Buffer.from(JSON.stringify(value));
-      //   },
-      // },
     }
   });
 
